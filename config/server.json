@@ -1,0 +1,12 @@
+{
+  "expected_clients": [
+    "jetson01",
+    "jetson02",
+    "jetson03",
+    "jetson04"
+  ],
+  "minimum_clients": 4,
+  "host": "0.0.0.0",
+  "port": 8000,
+  "state_file": "state/server_state.json"
+}

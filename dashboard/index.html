@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AiProff Federated Breathing Lab</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header>
+    <div>
+      <p class="eyebrow">AiProff Edge AI Cloud Lab</p>
+      <h1>Federated Breathing Support Simulation</h1>
+      <p class="subtitle">Watch learning travel while synthetic patient records stay on each Jetson.</p>
+    </div>
+    <div class="round-pill">Round <span id="round">0</span></div>
+  </header>
+
+  <main>
+    <section class="notice">
+      <strong>Educational simulation only.</strong> This dashboard is not medical device software and must never control a BiPAP machine.
+    </section>
+
+    <section class="metrics">
+      <article class="card blue"><span>Expected nodes</span><strong id="expected">0</strong></article>
+      <article class="card teal"><span>Updates waiting</span><strong id="pending">0</strong></article>
+      <article class="card green"><span>Raw patient rows at server</span><strong id="rawRows">0</strong></article>
+      <article class="card purple"><span>Update bytes received</span><strong id="bytes">0</strong></article>
+    </section>
+
+    <section class="grid">
+      <article class="panel">
+        <div class="panel-title">
+          <div><p class="eyebrow">Flow</p><h2>What moves across the network</h2></div>
+          <span class="badge">MODEL UPDATES ONLY</span>
+        </div>
+        <div class="flow">
+          <div class="node">Jetson patient nodes<br><small>raw CSV remains local</small></div>
+          <div class="arrow">protected weights →</div>
+          <div class="node server">Coordinator<br><small>combines learning</small></div>
+          <div class="arrow">← global model</div>
+        </div>
+        <canvas id="historyChart" width="760" height="260" aria-label="Weighted local MAE by completed round"></canvas>
+      </article>
+
+      <article class="panel">
+        <p class="eyebrow">Current round</p>
+        <h2>Client participation</h2>
+        <div id="clients" class="clients"></div>
+        <h3>Global model vector</h3>
+        <code id="modelVector">[0, 0, 0, 0, 0]</code>
+      </article>
+    </section>
+
+    <section class="panel history-panel">
+      <p class="eyebrow">Evidence</p>
+      <h2>Completed federated rounds</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Round</th><th>Participants</th><th>Privacy mode</th><th>Local rows used</th><th>Raw rows received</th><th>Weighted MAE</th></tr></thead>
+          <tbody id="history"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer>Refreshes automatically from <code>/api/status</code></footer>
+  <script src="/app.js"></script>
+</body>
+</html>

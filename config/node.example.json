@@ -1,0 +1,15 @@
+{
+  "client_id": "jetson01",
+  "patient_profile": "obstructive_pattern",
+  "seed": 101,
+  "server_url": "http://COORDINATOR_IP:8000",
+  "samples": 480,
+  "local_epochs": 8,
+  "learning_rate": 0.035,
+  "privacy_mode": "secure_dp",
+  "clip_norm": 1.0,
+  "noise_multiplier": 0.02,
+  "peer_secrets": {
+    "jetson02": "replace_with_generated_demo_secret"
+  }
+}
