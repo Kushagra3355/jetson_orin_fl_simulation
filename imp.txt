@@ -1,0 +1,145 @@
+  This happens because the data generator uses a fixed random seed configured for each node.
+
+  Here is the step-by-step reason why only timestamps change upon restarting:
+  ──────
+  ### 1. Fixed Random Seed in Node Configs
+
+  In your node configuration files (such as jetson01.json), the seed parameter is set to a static integer value (e.g. "seed": 101):
+
+    {
+      "client_id": "jetson01",
+      "patient_profile": "obstructive_pattern",
+      "seed": 101,
+      ...
+    }
+    ──────
+  ### 2. Deterministic Pseudo-Random Generator
+
+  When patient_node.py in patient_node.py runs on node startup, it passes this fixed seed to bipap_simulator.py:
+
+    # In edge/bipap_simulator.py
+    rng = np.random.default_rng(seed)
+    
+  Because seed=101 is fixed, NumPy's random number generator produces the exact same sequence of numbers for features like
+  respiratory_rate, tidal_volume_ml, leak_lpm, spo2_percent, and synthetic_target_adjustment_cmh2o every time the node starts up.
+  ──────
+  ### 3. Dynamic Timestamps
+
+  The only dynamic field is timestamp_utc, which uses the current system clock at runtime:
+
+    start = datetime.now(timezone.utc).replace(microsecond=0)
+    "timestamp_utc": (start + timedelta(seconds=index * 2)).isoformat()
+    
+  As a result, each restart records the current clock time, but all synthetic health metric values remain identical.
+  ──────
+  ### How to Generate New Data on Every Restart
+
+  If you want different random data generated every time you start/restart a node, you can update the seed dynamically.
+
+  #### Option A: Change "seed" in the JSON config
+
+  Edit jetson01.json to use a different integer (e.g. "seed": 999).
+
+  #### Option B: Use System Clock Seed in Code
+
+  In patient_node.py, you can fallback to the current timestamp as seed if desired:
+
+    import time
+
+    seed_val = settings.get("seed") or int(time.time())
+    rows = generate_records(
+        client_id=settings["client_id"],
+        profile_name=settings["patient_profile"],
+        samples=int(settings.get("samples", 480)),
+        seed=seed_val,
+    )
+
+
+
+
+ Here are the exact files and line numbers where the 2-second default interval is set:
+  ──────
+  ### 1. Client Node Loop Delay (Python Backend)
+
+  To change the 2-second wait time between model training checks on each patient node:
+
+  • File Path: patient_node.py
+  • Line 103:
+    parser.add_argument("--poll-seconds", type=float, default=2.0)
+
+  • How to change it:
+  Change default=2.0 to your preferred number of seconds (e.g. default=5.0 or default=10.0).
+  ──────
+  ### 2. Dashboard Refresh Interval (JavaScript Frontend)
+
+  To change the 2-second refresh rate of the browser dashboard:
+
+  • File Path: app.js
+  • Line 91:
+    setInterval(refresh, 2000);
+
+  • How to change it:
+  Change 2000 (milliseconds) to your desired duration in milliseconds (e.g. 5000 for 5 seconds or 10000 for 10 seconds).
+
+
+
+
+
+  ### Check 1: Normal Distribution, Noise & Aberrations
+
+  Status: PASSED
+  #### How the logic works in bipap_simulator.py:
+  1. Normal (Gaussian) Distribution:
+  All core patient physiological features are sampled from Gaussian distributions using NumPy's rng.normal(mean, std):
+      • Respiratory Rate (RR): 𝒩(mean = 15.5 -- 23.0, σ = 1.4 × variability)
+      • Tidal Volume: 𝒩(mean = 310 -- 540  mL, σ = 35.0 × variability)
+      • Air Leak Rate: 𝒩(mean = 7.0 -- 28.0  L/min, σ = 2.3 × variability)
+      • SpO₂ Oxygen Saturation: 𝒩(mean = 91.8% -- 96.0%, σ = 0.65)
+  2. Real-World Noise & Aberrations:
+      • Low-Frequency Drift: A sinusoidal wave slow_drift = math.sin(index / 37.0) simulates natural physiological drift (e.g., posture
+      shifts or sleep stages).
+      • Sensor Noise: Additive Gaussian noise rng.normal(0.0, 0.16) is injected into the target pressure adjustment calculation.
+      • Non-IID Patient Variations: 4 patient profiles (obstructive, high_leak, shallow_breath, stable) simulate diverse real-world
+      patient cohorts across Jetson nodes.
+
+
+  #### Empirical Verification Results (from 480 samples per profile):
+
+   Patient Profile           | Respiratory Rate (BPM)    | Tidal Volume (mL)        | Air Leak (L/min)         | SpO₂ (%)
+  ---------------------------|---------------------------|--------------------------|--------------------------|--------------------------
+   obstructive_pattern       | 20.47 ± 1.49              | 388.94 ± 38.95           | 18.02 ± 2.67             | 92.49 ± 0.68
+   high_leak_pattern         | 17.97 ± 1.75              | 428.74 ± 45.75           | 28.02 ± 3.10             | 93.49 ± 0.68
+   shallow_breath_pattern    | 22.98 ± 1.36              | 309.03 ± 35.59           | 11.02 ± 2.47             | 91.79 ± 0.68
+   stable_pattern            | 15.48 ± 1.11              | 539.22 ± 29.03           | 7.01 ± 2.07              | 95.99 ± 0.68
+  ──────
+  ### Check 2: I / E Pressure Ranges & Hard Threshold Limits
+
+  Status: PASSED
+
+  #### How the logic works in bipap_simulator.py:
+
+  1. Expiratory Pressure (EPAP):
+      • Baseline EPAP is fixed at 6.0  cmH₂ O (Line 85), which falls within typical non-invasive clinical EPAP settings (4.0 -- 8.0  cmH₂
+      O).
+  2. Inspiratory Pressure (IPAP) Hard Thresholds:
+      • Calculated dynamically as 14.0  cmH₂ O + target adjustment.
+      • Enforced via hard clipping thresholds on Line 86:
+        ipap = float(np.clip(14.0 + target, 9.0, 20.0))
+
+      • Lower Threshold Limit: 9.0  cmH₂ O
+      • Upper Threshold Limit: 20.0  cmH₂ O
+  3. Delivered Waveform Pressure Range:
+      • Computed via pressure_wave(phase, epap, ipap) (Line 52–55), smoothly oscillating between EPAP (6.0  cmH₂ O) and IPAP (9.0 -- 20.0
+      cmH₂ O).
+
+
+  #### Empirical Verification Results (Min / Max Limits):
+
+  • EPAP Range: 6.00  cmH₂ O to 6.00  cmH₂ O
+  • IPAP Range: 11.56  cmH₂ O min to 17.00  cmH₂ O max (strictly bounded inside [9.0,20.0])
+  • Delivered Pressure Range: 6.00  cmH₂ O min to 16.84  cmH₂ O max (smooth physical wave within clinical safety limits).
+
+
+
+
+
