@@ -41,11 +41,20 @@ def append_audit_log(path: Path, event: dict[str, Any]) -> None:
 
 
 def prepare_local_data(settings: dict[str, Any]) -> tuple[Any, Any, Any, Any, Path]:
+    seed_setting = settings.get("seed")
+    if settings.get("use_timestamp_seed") or seed_setting in ("timestamp", "time", "dynamic", "timestamp_seed"):
+        seed_val = int(time.time() * 1000) % 1_000_000_007
+    else:
+        try:
+            seed_val = int(seed_setting) if seed_setting is not None else 101
+        except (ValueError, TypeError):
+            seed_val = int(time.time() * 1000) % 1_000_000_007
+
     rows = generate_records(
         client_id=settings["client_id"],
         profile_name=settings["patient_profile"],
         samples=int(settings.get("samples", 480)),
-        seed=int(settings.get("seed", 101)),
+        seed=seed_val,
     )
     data_path = PROJECT_ROOT / "data" / settings["client_id"] / "synthetic_bipap_records.csv"
     write_local_csv(rows, data_path)
@@ -72,7 +81,7 @@ def run_round(settings: dict[str, Any], arrays: tuple[Any, Any, Any, Any], audit
         privacy_mode=settings.get("privacy_mode", "secure_dp"),
         clip_norm=float(settings.get("clip_norm", 1.0)),
         noise_multiplier=float(settings.get("noise_multiplier", 0.02)),
-        seed=int(settings.get("seed", 101)),
+        seed=int(settings.get("seed", 101)) if isinstance(settings.get("seed"), int) else 101,
         peer_secrets=dict(settings.get("peer_secrets", {})),
     )
     response = http_json(f"{server_url}/api/update", payload)
@@ -100,6 +109,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Synthetic BiPAP federated patient node")
     parser.add_argument("--config", required=True, help="Path to this Jetson node JSON config")
     parser.add_argument("--watch", action="store_true", help="Join every new round until stopped")
+    parser.add_argument("--timestamp-seed", action="store_true", help="Use current timestamp as random seed for dynamic synthetic data generation")
     parser.add_argument("--poll-seconds", type=float, default=2.0)
     args = parser.parse_args()
 
@@ -107,7 +117,10 @@ def main() -> None:
     if not config_path.is_absolute():
         config_path = PROJECT_ROOT / config_path
     settings = json.loads(config_path.read_text(encoding="utf8"))
+    if args.timestamp_seed:
+        settings["use_timestamp_seed"] = True
     x_train, y_train, x_test, y_test, data_path = prepare_local_data(settings)
+
     arrays = (x_train, y_train, x_test, y_test)
     audit_path = data_path.parent / "privacy_audit.jsonl"
     print(f"Local synthetic records: {data_path}")

@@ -17,6 +17,7 @@ def main() -> None:
     parser.add_argument("--clients", nargs="+", default=["jetson01", "jetson02", "jetson03", "jetson04"])
     parser.add_argument("--server-url", default="http://127.0.0.1:8000")
     parser.add_argument("--privacy-mode", choices=["weights_only", "secure", "dp", "secure_dp"], default="secure_dp")
+    parser.add_argument("--timestamp-seed", action="store_true", help="Use dynamic timestamp-based seed for synthetic data generation")
     parser.add_argument("--output-dir", default="config/clients")
     args = parser.parse_args()
 
@@ -42,8 +43,9 @@ def main() -> None:
         config = {
             "client_id": client_id,
             "patient_profile": PROFILES[index % len(PROFILES)],
-            "seed": 101 + index * 101,
+            "seed": "timestamp" if args.timestamp_seed else 101 + index * 101,
             "server_url": args.server_url,
+
             "samples": 480,
             "local_epochs": 8,
             "learning_rate": 0.035,

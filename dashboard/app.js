@@ -23,9 +23,11 @@ function renderHistory(history) {
       <td>${row.privacy_mode}</td>
       <td>${row.total_local_training_rows}</td>
       <td><strong>${row.raw_patient_rows_received}</strong></td>
+      <td><code>${JSON.stringify((row.global_vector || []).map((v) => Number(v).toFixed(4)))}</code></td>
       <td>${Number(row.weighted_local_mae).toFixed(3)}</td>
-    </tr>`).join("") || `<tr><td colspan="6">Waiting for the first complete round.</td></tr>`;
+    </tr>`).join("") || `<tr><td colspan="7">Waiting for the first complete round.</td></tr>`;
 }
+
 
 function drawHistory(history) {
   const canvas = byId("historyChart");
@@ -73,6 +75,7 @@ async function refresh() {
     const response = await fetch("/api/status", { cache: "no-store" });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const status = await response.json();
+    
     byId("round").textContent = status.round_number;
     byId("expected").textContent = status.expected_clients.length;
     byId("pending").textContent = status.pending_count;
@@ -88,4 +91,6 @@ async function refresh() {
 }
 
 refresh();
-setInterval(refresh, 2000);
+setInterval(refresh, 1000);
+
+
