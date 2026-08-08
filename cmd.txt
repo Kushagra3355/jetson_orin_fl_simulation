@@ -1,0 +1,15 @@
+Steps to run:
+
+1. create venv and install requirements
+ 
+2. python tools/generate_client_configs.py --timestamp-seed
+
+3. python -m server.coordinator --config config/server.json --reset
+
+4. python tools/run_sequential_rounds.py --rounds 10 --timestamp-seed --round-delay 3.0 --node-delay 1.0
+
+
+
+
+#Just to see the comparison of local, FL, etc.
+    python -m comparison.run_all_in_one
