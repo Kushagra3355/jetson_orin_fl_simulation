@@ -13,3 +13,8 @@ Steps to run:
 
 #Just to see the comparison of local, FL, etc.
     python -m comparison.run_all_in_one
+
+
+## with single terminla nad instant access
+
+ python tools/run_in_background.py
