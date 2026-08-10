@@ -106,6 +106,14 @@ class SimulationTests(unittest.TestCase):
             self.assertEqual(state.status()["server_raw_patient_rows"], 0)
             self.assertEqual(state.history[-1]["raw_patient_rows_received"], 0)
 
+    def test_coordinator_start_training_and_status(self) -> None:
+        with TemporaryDirectory() as temporary:
+            state = CoordinatorState(["jetson01"], 1, Path(temporary) / "state.json")
+            status = state.status()
+            self.assertIn("is_training", status)
+            self.assertFalse(status["is_training"])
+            self.assertEqual(status["training_status"], "idle")
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -13,6 +13,8 @@ from __future__ import annotations
 import argparse
 import json
 import mimetypes
+import subprocess
+import sys
 import threading
 from dataclasses import dataclass, field
 from http import HTTPStatus
@@ -64,6 +66,7 @@ class CoordinatorState:
     history: list[dict[str, Any]] = field(default_factory=list)
     update_bytes_received: int = 0
     lock: threading.Lock = field(default_factory=threading.Lock)
+    training_proc: subprocess.Popen | None = field(default=None, repr=False)
 
     def public_model(self) -> dict[str, Any]:
         return {
@@ -74,6 +77,18 @@ class CoordinatorState:
         }
 
     def status(self) -> dict[str, Any]:
+        is_training = False
+        training_status = "idle"
+        if self.training_proc is not None:
+            poll_res = self.training_proc.poll()
+            if poll_res is None:
+                is_training = True
+                training_status = "running"
+            elif poll_res == 0:
+                training_status = "completed"
+            else:
+                training_status = "failed"
+
         return {
             **self.public_model(),
             "minimum_clients": self.minimum_clients,
@@ -83,7 +98,46 @@ class CoordinatorState:
             "update_bytes_received": self.update_bytes_received,
             "history": self.history[-20:],
             "safety_notice": "Synthetic educational simulation only. Not medical device software.",
+            "is_training": is_training,
+            "training_status": training_status,
         }
+
+    def start_training(self) -> dict[str, Any]:
+        with self.lock:
+            if self.training_proc is not None and self.training_proc.poll() is None:
+                return {
+                    "success": False,
+                    "message": "Training is already running in background",
+                    "status": "running",
+                }
+            logs_dir = PROJECT_ROOT / "logs"
+            logs_dir.mkdir(exist_ok=True)
+            training_log_path = logs_dir / "training.log"
+            training_log_file = open(training_log_path, "w", encoding="utf-8")
+            training_cmd = [
+                sys.executable,
+                str(PROJECT_ROOT / "tools" / "run_sequential_rounds.py"),
+                "--rounds", "10",
+                "--timestamp-seed",
+                "--round-delay", "3.0",
+                "--node-delay", "1.0",
+            ]
+            creationflags = 0
+            if sys.platform == "win32":
+                creationflags = subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.DETACHED_PROCESS
+            self.training_proc = subprocess.Popen(
+                training_cmd,
+                cwd=str(PROJECT_ROOT),
+                stdout=training_log_file,
+                stderr=subprocess.STDOUT,
+                creationflags=creationflags,
+                close_fds=True if sys.platform != "win32" else False,
+            )
+            return {
+                "success": True,
+                "message": f"Training started in background (PID: {self.training_proc.pid})",
+                "status": "running",
+            }
 
     def validate_payload(self, payload: dict[str, Any]) -> None:
         unknown = set(payload) - PAYLOAD_FIELDS
@@ -166,6 +220,7 @@ class CoordinatorState:
             self.pending.clear()
             self.history.clear()
             self.update_bytes_received = 0
+            self.training_proc = None
             self.save()
 
     def save(self) -> None:
@@ -189,7 +244,6 @@ class CoordinatorState:
 
 
 class CoordinatorHandler(BaseHTTPRequestHandler):
-    state: CoordinatorState
     dashboard_dir = PROJECT_ROOT / "dashboard"
 
     def log_message(self, format_string: str, *args: object) -> None:
@@ -220,7 +274,7 @@ class CoordinatorHandler(BaseHTTPRequestHandler):
             length = int(self.headers.get("Content-Length", "0"))
             if length > 64_000:
                 raise ValueError("Payload too large for a model update")
-            raw = self.rfile.read(length)
+            raw = self.rfile.read(length) if length > 0 else b""
             payload = json.loads(raw.decode("utf8")) if raw else {}
             if path == "/api/update":
                 self._json(self.state.submit(payload, len(raw)), HTTPStatus.ACCEPTED)
@@ -228,6 +282,11 @@ class CoordinatorHandler(BaseHTTPRequestHandler):
             if path == "/api/reset":
                 self.state.reset()
                 self._json({"reset": True})
+                return
+            if path in {"/api/start-training", "/api/start_training"}:
+                res = self.state.start_training()
+                status_code = HTTPStatus.OK if res["success"] else HTTPStatus.CONFLICT
+                self._json(res, status_code)
                 return
             self._json({"error": "Unknown endpoint"}, HTTPStatus.NOT_FOUND)
         except (ValueError, TypeError, json.JSONDecodeError) as exc:

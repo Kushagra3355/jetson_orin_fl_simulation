@@ -5,91 +5,91 @@ Starting sequential execution for 10 rounds (Initial Server Round: 0)...
 ==========================================
         ROUND 1 / 10 (Sequential)
 ==========================================
-  --> Running jetson01... jetson01 submitted round 0: local MAE 0.323, raw rows sent 0, privacy secure_dp
-  --> Running jetson02... jetson02 submitted round 0: local MAE 0.230, raw rows sent 0, privacy secure_dp
-  --> Running jetson03... jetson03 submitted round 0: local MAE 0.231, raw rows sent 0, privacy secure_dp
-  --> Running jetson04... jetson04 submitted round 0: local MAE 0.403, raw rows sent 0, privacy secure_dp
+  --> Running jetson01... jetson01 submitted round 0: local MAE 0.300, raw rows sent 0, privacy secure_dp
+  --> Running jetson02... jetson02 submitted round 0: local MAE 0.246, raw rows sent 0, privacy secure_dp
+  --> Running jetson03... jetson03 submitted round 0: local MAE 0.236, raw rows sent 0, privacy secure_dp
+  --> Running jetson04... jetson04 submitted round 0: local MAE 0.423, raw rows sent 0, privacy secure_dp
   [Round 1 Complete] -> Coordinator updated global model!
 
 ==========================================
         ROUND 2 / 10 (Sequential)
 ==========================================
-  --> Running jetson01... jetson01 submitted round 1: local MAE 0.201, raw rows sent 0, privacy secure_dp
-  --> Running jetson02... jetson02 submitted round 1: local MAE 0.146, raw rows sent 0, privacy secure_dp
-  --> Running jetson03... jetson03 submitted round 1: local MAE 0.206, raw rows sent 0, privacy secure_dp
-  --> Running jetson04... jetson04 submitted round 1: local MAE 0.242, raw rows sent 0, privacy secure_dp
+  --> Running jetson01... jetson01 submitted round 1: local MAE 0.188, raw rows sent 0, privacy secure_dp
+  --> Running jetson02... jetson02 submitted round 1: local MAE 0.175, raw rows sent 0, privacy secure_dp
+  --> Running jetson03... jetson03 submitted round 1: local MAE 0.205, raw rows sent 0, privacy secure_dp
+  --> Running jetson04... jetson04 submitted round 1: local MAE 0.250, raw rows sent 0, privacy secure_dp
   [Round 2 Complete] -> Coordinator updated global model!
 
 ==========================================
         ROUND 3 / 10 (Sequential)
 ==========================================
-  --> Running jetson01... jetson01 submitted round 2: local MAE 0.154, raw rows sent 0, privacy secure_dp
-  --> Running jetson02... jetson02 submitted round 2: local MAE 0.117, raw rows sent 0, privacy secure_dp
-  --> Running jetson03... jetson03 submitted round 2: local MAE 0.195, raw rows sent 0, privacy secure_dp
-  --> Running jetson04... jetson04 submitted round 2: local MAE 0.171, raw rows sent 0, privacy secure_dp
+  --> Running jetson01... jetson01 submitted round 2: local MAE 0.145, raw rows sent 0, privacy secure_dp
+  --> Running jetson02... jetson02 submitted round 2: local MAE 0.145, raw rows sent 0, privacy secure_dp
+  --> Running jetson03... jetson03 submitted round 2: local MAE 0.191, raw rows sent 0, privacy secure_dp
+  --> Running jetson04... jetson04 submitted round 2: local MAE 0.172, raw rows sent 0, privacy secure_dp
   [Round 3 Complete] -> Coordinator updated global model!
 
 ==========================================
         ROUND 4 / 10 (Sequential)
 ==========================================
-  --> Running jetson01... jetson01 submitted round 3: local MAE 0.140, raw rows sent 0, privacy secure_dp
-  --> Running jetson02... jetson02 submitted round 3: local MAE 0.112, raw rows sent 0, privacy secure_dp
-  --> Running jetson03... jetson03 submitted round 3: local MAE 0.193, raw rows sent 0, privacy secure_dp
-  --> Running jetson04... jetson04 submitted round 3: local MAE 0.156, raw rows sent 0, privacy secure_dp
+  --> Running jetson01... jetson01 submitted round 3: local MAE 0.139, raw rows sent 0, privacy secure_dp
+  --> Running jetson02... jetson02 submitted round 3: local MAE 0.142, raw rows sent 0, privacy secure_dp
+  --> Running jetson03... jetson03 submitted round 3: local MAE 0.189, raw rows sent 0, privacy secure_dp
+  --> Running jetson04... jetson04 submitted round 3: local MAE 0.149, raw rows sent 0, privacy secure_dp
   [Round 4 Complete] -> Coordinator updated global model!
 
 ==========================================
         ROUND 5 / 10 (Sequential)
 ==========================================
-  --> Running jetson01... jetson01 submitted round 4: local MAE 0.143, raw rows sent 0, privacy secure_dp
-  --> Running jetson02... jetson02 submitted round 4: local MAE 0.116, raw rows sent 0, privacy secure_dp
-  --> Running jetson03... jetson03 submitted round 4: local MAE 0.186, raw rows sent 0, privacy secure_dp
-  --> Running jetson04... jetson04 submitted round 4: local MAE 0.152, raw rows sent 0, privacy secure_dp
+  --> Running jetson01... jetson01 submitted round 4: local MAE 0.139, raw rows sent 0, privacy secure_dp
+  --> Running jetson02... jetson02 submitted round 4: local MAE 0.146, raw rows sent 0, privacy secure_dp
+  --> Running jetson03... jetson03 submitted round 4: local MAE 0.185, raw rows sent 0, privacy secure_dp
+  --> Running jetson04... jetson04 submitted round 4: local MAE 0.133, raw rows sent 0, privacy secure_dp
   [Round 5 Complete] -> Coordinator updated global model!
 
 ==========================================
         ROUND 6 / 10 (Sequential)
 ==========================================
-  --> Running jetson01... jetson01 submitted round 5: local MAE 0.148, raw rows sent 0, privacy secure_dp
-  --> Running jetson02... jetson02 submitted round 5: local MAE 0.119, raw rows sent 0, privacy secure_dp
-  --> Running jetson03... jetson03 submitted round 5: local MAE 0.193, raw rows sent 0, privacy secure_dp
-  --> Running jetson04... jetson04 submitted round 5: local MAE 0.152, raw rows sent 0, privacy secure_dp
+  --> Running jetson01... jetson01 submitted round 5: local MAE 0.145, raw rows sent 0, privacy secure_dp
+  --> Running jetson02... jetson02 submitted round 5: local MAE 0.152, raw rows sent 0, privacy secure_dp
+  --> Running jetson03... jetson03 submitted round 5: local MAE 0.191, raw rows sent 0, privacy secure_dp
+  --> Running jetson04... jetson04 submitted round 5: local MAE 0.128, raw rows sent 0, privacy secure_dp
   [Round 6 Complete] -> Coordinator updated global model!
 
 ==========================================
         ROUND 7 / 10 (Sequential)
 ==========================================
-  --> Running jetson01... jetson01 submitted round 6: local MAE 0.157, raw rows sent 0, privacy secure_dp
-  --> Running jetson02... jetson02 submitted round 6: local MAE 0.127, raw rows sent 0, privacy secure_dp
+  --> Running jetson01... jetson01 submitted round 6: local MAE 0.154, raw rows sent 0, privacy secure_dp
+  --> Running jetson02... jetson02 submitted round 6: local MAE 0.161, raw rows sent 0, privacy secure_dp
   --> Running jetson03... jetson03 submitted round 6: local MAE 0.193, raw rows sent 0, privacy secure_dp
-  --> Running jetson04... jetson04 submitted round 6: local MAE 0.153, raw rows sent 0, privacy secure_dp
+  --> Running jetson04... jetson04 submitted round 6: local MAE 0.128, raw rows sent 0, privacy secure_dp
   [Round 7 Complete] -> Coordinator updated global model!
 
 ==========================================
         ROUND 8 / 10 (Sequential)
 ==========================================
-  --> Running jetson01... jetson01 submitted round 7: local MAE 0.164, raw rows sent 0, privacy secure_dp
-  --> Running jetson02... jetson02 submitted round 7: local MAE 0.136, raw rows sent 0, privacy secure_dp
-  --> Running jetson03... jetson03 submitted round 7: local MAE 0.199, raw rows sent 0, privacy secure_dp
-  --> Running jetson04... jetson04 submitted round 7: local MAE 0.156, raw rows sent 0, privacy secure_dp
+  --> Running jetson01... jetson01 submitted round 7: local MAE 0.161, raw rows sent 0, privacy secure_dp
+  --> Running jetson02... jetson02 submitted round 7: local MAE 0.169, raw rows sent 0, privacy secure_dp
+  --> Running jetson03... jetson03 submitted round 7: local MAE 0.198, raw rows sent 0, privacy secure_dp
+  --> Running jetson04... jetson04 submitted round 7: local MAE 0.131, raw rows sent 0, privacy secure_dp
   [Round 8 Complete] -> Coordinator updated global model!
 
 ==========================================
         ROUND 9 / 10 (Sequential)
 ==========================================
-  --> Running jetson01... jetson01 submitted round 8: local MAE 0.170, raw rows sent 0, privacy secure_dp
-  --> Running jetson02... jetson02 submitted round 8: local MAE 0.147, raw rows sent 0, privacy secure_dp
-  --> Running jetson03... jetson03 submitted round 8: local MAE 0.202, raw rows sent 0, privacy secure_dp
-  --> Running jetson04... jetson04 submitted round 8: local MAE 0.164, raw rows sent 0, privacy secure_dp
+  --> Running jetson01... jetson01 submitted round 8: local MAE 0.165, raw rows sent 0, privacy secure_dp
+  --> Running jetson02... jetson02 submitted round 8: local MAE 0.178, raw rows sent 0, privacy secure_dp
+  --> Running jetson03... jetson03 submitted round 8: local MAE 0.201, raw rows sent 0, privacy secure_dp
+  --> Running jetson04... jetson04 submitted round 8: local MAE 0.138, raw rows sent 0, privacy secure_dp
   [Round 9 Complete] -> Coordinator updated global model!
 
 ==========================================
         ROUND 10 / 10 (Sequential)
 ==========================================
-  --> Running jetson01... jetson01 submitted round 9: local MAE 0.176, raw rows sent 0, privacy secure_dp
-  --> Running jetson02... jetson02 submitted round 9: local MAE 0.153, raw rows sent 0, privacy secure_dp
+  --> Running jetson01... jetson01 submitted round 9: local MAE 0.170, raw rows sent 0, privacy secure_dp
+  --> Running jetson02... jetson02 submitted round 9: local MAE 0.184, raw rows sent 0, privacy secure_dp
   --> Running jetson03... jetson03 submitted round 9: local MAE 0.198, raw rows sent 0, privacy secure_dp
-  --> Running jetson04... jetson04 submitted round 9: local MAE 0.166, raw rows sent 0, privacy secure_dp
+  --> Running jetson04... jetson04 submitted round 9: local MAE 0.139, raw rows sent 0, privacy secure_dp
   [Round 10 Complete] -> Coordinator updated global model!
 
-Completed all 10 sequential rounds in 68.58 seconds.
+Completed all 10 sequential rounds in 68.68 seconds.

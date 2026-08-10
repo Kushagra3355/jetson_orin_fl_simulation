@@ -1,4 +1,30 @@
 const byId = (id) => document.getElementById(id);
+const startTrainBtn = byId("startTrainBtn");
+let trainingInitiated = false;
+
+if (startTrainBtn) {
+  startTrainBtn.addEventListener("click", async () => {
+    trainingInitiated = true;
+    startTrainBtn.disabled = true;
+    startTrainBtn.textContent = "Starting Training...";
+    try {
+      const response = await fetch("/api/start-training", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }
+      });
+      const data = await response.json();
+      if (!response.ok && response.status !== 409) {
+        throw new Error(data.message || data.error || "Failed to start training");
+      }
+      refresh();
+    } catch (err) {
+      alert(`Error starting training: ${err.message}`);
+      trainingInitiated = false;
+      startTrainBtn.disabled = false;
+      startTrainBtn.textContent = "Start Training";
+    }
+  });
+}
 
 function formatBytes(value) {
   if (value < 1024) return `${value} B`;
@@ -85,6 +111,20 @@ async function refresh() {
     renderClients(status.expected_clients, status.pending_clients);
     renderHistory(status.history);
     drawHistory(status.history);
+
+    if (startTrainBtn) {
+      if (status.is_training) {
+        trainingInitiated = true;
+        startTrainBtn.disabled = true;
+        startTrainBtn.textContent = "Training in Progress...";
+      } else if (status.training_status === "completed" || status.round_number > 0 || trainingInitiated) {
+        startTrainBtn.disabled = true;
+        startTrainBtn.textContent = "Training Completed";
+      } else {
+        startTrainBtn.disabled = false;
+        startTrainBtn.textContent = "Start Training";
+      }
+    }
   } catch (error) {
     byId("modelVector").innerHTML = `<span class="error">Coordinator unavailable: ${error.message}</span>`;
   }
@@ -92,5 +132,6 @@ async function refresh() {
 
 refresh();
 setInterval(refresh, 1000);
+
 
 
