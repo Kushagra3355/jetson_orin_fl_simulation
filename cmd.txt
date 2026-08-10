@@ -17,13 +17,10 @@ Steps to run:
 
 ## with single terminla nad instant access
 
-<<<<<<< HEAD
     python tools/run_in_background.py
-=======
- python tools/run_in_background.py
 
 
-## for 4 seperate terminals working
+### for seperate 4 terminals
 
 python tools/generate_client_configs.py --clients jetson01 jetson02 jetson03 jetson04 --server-url http://localhost:8000 --privacy-mode secure_dp
 
@@ -31,4 +28,3 @@ python -m server.coordinator --config config/server.json --reset
 
 "jetson01", "jetson02", "jetson03", "jetson04" | ForEach-Object { Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd
 '$PWD'; .\.venv\Scripts\activate; python -m edge.patient_node --config config/clients/$_.json --watch" }
->>>>>>> d202e9fcd231a1b805135396cbd75975351de51a
